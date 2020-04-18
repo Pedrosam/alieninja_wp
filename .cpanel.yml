@@ -1,2 +1,4 @@
-#!/bin/sh
-GIT_WORK_TREE=/home2/alieni52/public_html git checkout -f
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/alieni52/public_html/
+    - /bin/cp -R images $DEPLOYPATH
