@@ -25,7 +25,7 @@
 	</head>
 
 	<body <?php body_class(); ?>>
-	<h1>Hello World!</h1>
+	<h1>Hello World!!!</h1>
 		<?php
 		wp_body_open();
 		?>
