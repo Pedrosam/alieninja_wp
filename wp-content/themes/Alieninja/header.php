@@ -25,11 +25,10 @@
 	</head>
 
 	<body <?php body_class(); ?>>
-
+	<h1>Hello World!</h1>
 		<?php
 		wp_body_open();
 		?>
-
 		<header id="site-header" class="header-footer-group" role="banner">
 
 			<div class="header-inner section-inner">
