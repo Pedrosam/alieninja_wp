@@ -1,132 +1,116 @@
 <?php
 /**
- * The template file for displaying the comments and comment form for the
- * Twenty Twenty theme.
+ * The template for displaying comments
  *
- * @package WordPress
- * @subpackage Twenty_Twenty
- * @since Twenty Twenty 1.0
+ * This is the template that displays the area of the page that contains both the current comments
+ * and the comment form.
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WP_Bootstrap_Starter
  */
 
 /*
  * If the current post is protected by a password and
  * the visitor has not yet entered the password we will
  * return early without loading the comments.
-*/
+ */
 if ( post_password_required() ) {
 	return;
 }
+?>
 
-if ( $comments ) {
-	?>
+<div id="comments" class="comments-area">
 
-	<div class="comments" id="comments">
+    <?php
+    // You can start editing here -- including this comment!
+    if ( have_comments() ) : ?>
 
-		<?php
-		$comments_number = absint( get_comments_number() );
-		?>
-
-		<div class="comments-header section-inner small max-percentage">
-
-			<h2 class="comment-reply-title">
-			<?php
-			if ( ! have_comments() ) {
-				_e( 'Leave a comment', 'twentytwenty' );
-			} elseif ( '1' === $comments_number ) {
-				/* translators: %s: Post title. */
-				printf( _x( 'One reply on &ldquo;%s&rdquo;', 'comments title', 'twentytwenty' ), get_the_title() );
-			} else {
-				printf(
-					/* translators: 1: Number of comments, 2: Post title. */
-					_nx(
-						'%1$s reply on &ldquo;%2$s&rdquo;',
-						'%1$s replies on &ldquo;%2$s&rdquo;',
-						$comments_number,
-						'comments title',
-						'twentytwenty'
-					),
-					number_format_i18n( $comments_number ),
-					get_the_title()
+        <h2 class="comments-title">
+            <?php
+            $comments_number = get_comments_number();
+            if ( '1' === $comments_number ) {
+                printf(
+					/* translators: 1: title. */
+					esc_html__( 'One thought on &ldquo;%1$s&rdquo;', 'wp-bootstrap-starter' ),
+					'<span>' . esc_html(get_the_title()) . '</span>'
 				);
-			}
+            } else {
+                printf( // WPCS: XSS OK.
+					/* translators: 1: comment count number, 2: title. */
+					esc_html( _nx( '%1$s thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', $underscore_comment_count, 'comments title', 'wp-bootstrap-starter' ) ),
+					esc_html( number_format_i18n( $underscore_comment_count ) ),
+					'<span>' . esc_html( get_the_title() ) . '</span>'
+				);
+            }
+            ?>
+        </h2><!-- .comments-title -->
 
-			?>
-			</h2><!-- .comments-title -->
 
-		</div><!-- .comments-header -->
+        <?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
+            <nav id="comment-nav-above" class="navigation comment-navigation" role="navigation">
+                <h2 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'wp-bootstrap-starter' ); ?></h2>
+                <div class="nav-links">
 
-		<div class="comments-inner section-inner thin max-percentage">
+                    <div class="nav-previous"><?php previous_comments_link( esc_html__( 'Older Comments', 'wp-bootstrap-starter' ) ); ?></div>
+                    <div class="nav-next"><?php next_comments_link( esc_html__( 'Newer Comments', 'wp-bootstrap-starter' ) ); ?></div>
 
-			<?php
-			wp_list_comments(
-				array(
-					'walker'      => new TwentyTwenty_Walker_Comment(),
-					'avatar_size' => 120,
-					'style'       => 'div',
-				)
-			);
+                </div><!-- .nav-links -->
+            </nav><!-- #comment-nav-above -->
+        <?php endif; // Check for comment navigation. ?>
 
-			$comment_pagination = paginate_comments_links(
-				array(
-					'echo'      => false,
-					'end_size'  => 0,
-					'mid_size'  => 0,
-					'next_text' => __( 'Newer Comments', 'twentytwenty' ) . ' <span aria-hidden="true">&rarr;</span>',
-					'prev_text' => '<span aria-hidden="true">&larr;</span> ' . __( 'Older Comments', 'twentytwenty' ),
-				)
-			);
+        <ul class="comment-list">
+            <?php
+            wp_list_comments( array( 'callback' => 'wp_bootstrap_starter_comment', 'avatar_size' => 50 ));
+            ?>
+        </ul><!-- .comment-list -->
 
-			if ( $comment_pagination ) {
-				$pagination_classes = '';
+        <?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
+            <nav id="comment-nav-below" class="navigation comment-navigation" role="navigation">
+                <h2 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'wp-bootstrap-starter' ); ?></h2>
+                <div class="nav-links">
 
-				// If we're only showing the "Next" link, add a class indicating so.
-				if ( false === strpos( $comment_pagination, 'prev page-numbers' ) ) {
-					$pagination_classes = ' only-next';
-				}
-				?>
+                    <div class="nav-previous"><?php previous_comments_link( esc_html__( 'Older Comments', 'wp-bootstrap-starter' ) ); ?></div>
+                    <div class="nav-next"><?php next_comments_link( esc_html__( 'Newer Comments', 'wp-bootstrap-starter' ) ); ?></div>
 
-				<nav class="comments-pagination pagination<?php echo $pagination_classes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static output ?>" aria-label="<?php esc_attr_e( 'Comments', 'twentytwenty' ); ?>">
-					<?php echo wp_kses_post( $comment_pagination ); ?>
-				</nav>
+                </div><!-- .nav-links -->
+            </nav><!-- #comment-nav-below -->
+            <?php
+        endif; // Check for comment navigation.
 
-				<?php
-			}
-			?>
+    endif; // Check for have_comments().
 
-		</div><!-- .comments-inner -->
 
-	</div><!-- comments -->
+    // If comments are closed and there are comments, let's leave a little note, shall we?
+    if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : ?>
 
-	<?php
-}
+        <p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'wp-bootstrap-starter' ); ?></p>
+        <?php
+    endif; ?>
 
-if ( comments_open() || pings_open() ) {
+    <?php comment_form( $args = array(
+        'id_form'           => 'commentform',  // that's the wordpress default value! delete it or edit it ;)
+        'id_submit'         => 'commentsubmit',
+        'title_reply'       => __( 'Leave a Reply', 'wp-bootstrap-starter' ),  // that's the wordpress default value! delete it or edit it ;)
+		/* translators: 1: Reply Specific User */
+        'title_reply_to'    => __( 'Leave a Reply to %s', 'wp-bootstrap-starter' ),  // that's the wordpress default value! delete it or edit it ;)
+        'cancel_reply_link' => __( 'Cancel Reply', 'wp-bootstrap-starter' ),  // that's the wordpress default value! delete it or edit it ;)
+        'label_submit'      => __( 'Post Comment', 'wp-bootstrap-starter' ),  // that's the wordpress default value! delete it or edit it ;)
 
-	if ( $comments ) {
-		echo '<hr class="styled-separator is-style-wide" aria-hidden="true" />';
-	}
+        'comment_field' =>  '<p><textarea placeholder="Start typing..." id="comment" class="form-control" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>',
 
-	comment_form(
-		array(
-			'class_form'         => 'section-inner thin max-percentage',
-			'title_reply_before' => '<h2 id="reply-title" class="comment-reply-title">',
-			'title_reply_after'  => '</h2>',
-		)
-	);
+        'comment_notes_after' => '<p class="form-allowed-tags">' .
+            __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:', 'wp-bootstrap-starter' ) .
+            '</p><div class="alert alert-info">' . allowed_tags() . '</div>'
 
-} elseif ( is_single() ) {
+        // So, that was the needed stuff to have bootstrap basic styles for the form elements and buttons
 
-	if ( $comments ) {
-		echo '<hr class="styled-separator is-style-wide" aria-hidden="true" />';
-	}
+        // Basically you can edit everything here!
+        // Checkout the docs for more: http://codex.wordpress.org/Function_Reference/comment_form
+        // Another note: some classes are added in the bootstrap-wp.js - ckeck from line 1
+
+    ));
 
 	?>
 
-	<div class="comment-respond" id="respond">
-
-		<p class="comments-closed"><?php _e( 'Comments are closed.', 'twentytwenty' ); ?></p>
-
-	</div><!-- #respond -->
-
-	<?php
-}
+</div><!-- #comments -->

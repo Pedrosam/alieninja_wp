@@ -1,36 +1,37 @@
 <?php
 /**
- * The template for displaying the 404 template in the Twenty Twenty theme.
+ * The template for displaying 404 pages (not found)
  *
- * @package WordPress
- * @subpackage Twenty_Twenty
- * @since Twenty Twenty 1.0
+ * @link https://codex.wordpress.org/Creating_an_Error_404_Page
+ *
+ * @package WP_Bootstrap_Starter
  */
 
-get_header();
-?>
+get_header(); ?>
 
-<main id="site-content" role="main">
+	<section id="primary" class="content-area col-sm-12 col-lg-8">
+		<main id="main" class="site-main" role="main">
 
-	<div class="section-inner thin error404-content">
+			<section class="error-404 not-found">
+				<header class="page-header">
+					<h1 class="page-title"><?php esc_html_e( 'Oops! That page can&rsquo;t be found.', 'wp-bootstrap-starter' ); ?></h1>
+				</header><!-- .page-header -->
 
-		<h1 class="entry-title"><?php _e( 'Page Not Found', 'twentytwenty' ); ?></h1>
+				<div class="page-content">
+					<p><?php esc_html_e( 'It looks like nothing was found at this location. Maybe try one of the links below or a search?', 'wp-bootstrap-starter' ); ?></p>
 
-		<div class="intro-text"><p><?php _e( 'The page you were looking for could not be found. It might have been removed, renamed, or did not exist in the first place.', 'twentytwenty' ); ?></p></div>
+					<?php
+						get_search_form();
 
-		<?php
-		get_search_form(
-			array(
-				'label' => __( '404 not found', 'twentytwenty' ),
-			)
-		);
-		?>
 
-	</div><!-- .section-inner -->
+					?>
 
-</main><!-- #site-content -->
+				</div><!-- .page-content -->
+			</section><!-- .error-404 -->
 
-<?php get_template_part( 'template-parts/footer-menus-widgets' ); ?>
+		</main><!-- #main -->
+	</section><!-- #primary -->
 
 <?php
+get_sidebar();
 get_footer();
